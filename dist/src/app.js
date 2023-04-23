@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,6 +40,7 @@ const express_1 = __importDefault(require("express"));
 const index_1 = __importDefault(require("./Logs/index"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv = __importStar(require("dotenv"));
+const db_1 = require("./database/db");
 dotenv.config();
 exports.app = (0, express_1.default)();
 // Middleware
@@ -55,6 +65,19 @@ exports.app.get('/greeting', (req, res) => {
         index_1.default.error('Error greeting endpoint.', { error });
     }
 });
+// Test Venues
+exports.app.get('/venues', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const venues = (0, db_1.getAllVenues)();
+        console.log(venues);
+        res.status(200).json(venues);
+        index_1.default.info('Success request for venues.');
+    }
+    catch (error) {
+        console.log(error);
+        index_1.default.error('Error on venues request.', { error });
+    }
+}));
 const PORT = process.env.PORT || 3000;
 exports.app.listen(PORT, () => {
     return console.log(`Listening on port: ${PORT}`);
